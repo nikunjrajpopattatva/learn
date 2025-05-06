@@ -1,0 +1,277 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Plan for .NET, React, TypeScript, Next.js, MongoDB, and Azure DevOps</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .phase-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .phase-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            position: absolute;
+            left: -6px;
+            top: 0;
+        }
+        .scroll-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .scroll-to-top.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <header class="bg-indigo-600 text-white py-6 text-center">
+        <h1 class="text-4xl font-bold tracking-tight">Learning Plan for Modern Web Development</h1>
+        <p class="mt-2 text-lg">Master .NET, React, TypeScript, Next.js, MongoDB, and Azure DevOps in 7-9 Months</p>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-6">
+        <!-- Introduction -->
+        <section class="mb-12 bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-semibold text-indigo-600 mb-4">Overview</h2>
+            <p class="text-gray-700 leading-relaxed">
+                This comprehensive <strong>7-9 month</strong> learning plan is designed to equip you with skills in <strong>.NET</strong>, <strong>React</strong>, <strong>TypeScript</strong>, <strong>Next.js</strong>, <strong>MongoDB</strong>, and <strong>Azure DevOps</strong>. With 10-15 hours of weekly study, you'll build a strong foundation through hands-on projects, preparing you for full-stack development roles.
+            </p>
+        </section>
+
+        <!-- Phases -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold text-indigo-600 mb-6">Learning Phases</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Phase 1: .NET -->
+                <div class="phase-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-indigo-700 mb-2">Phase 1: .NET (6-8 Weeks)</h3>
+                    <p class="text-gray-600 mb-4"><strong>Objective:</strong> Master C#, .NET Core, and ASP.NET Core for backend APIs.</p>
+                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                        <li><strong>Weeks 1-2:</strong> C# basics (syntax, OOP) - Build a calculator and student management console app.</li>
+                        <li><strong>Weeks 3-4:</strong> Intermediate C# (LINQ, async) - Create a JSON data filter and task manager.</li>
+                        <li><strong>Weeks 5-6:</strong> ASP.NET Core basics (MVC, EF Core) - Build a To-Do List API.</li>
+                        <li><strong>Weeks 7-8:</strong> Advanced ASP.NET Core (JWT, Swagger) - Develop and deploy a Blog API.</li>
+                    </ul>
+                    <p class="mt-4 text-gray-600"><strong>Milestones:</strong> Functional Blog API, deployed to Azure.</p>
+                    <p class="mt-2 text-gray-600"><strong>Resources:</strong> Microsoft Learn, Pluralsight, Udemy.</p>
+                </div>
+
+                <!-- Phase 2: JavaScript and TypeScript -->
+                <div class="phase-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-indigo-700 mb-2">Phase 2: JavaScript & TypeScript (4-6 Weeks)</h3>
+                    <p class="text-gray-600 mb-4"><strong>Objective:</strong> Build a foundation in JavaScript and TypeScript.</p>
+                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                        <li><strong>Weeks 1-2:</strong> JavaScript/ES6+ (DOM, promises) - Build a To-Do List and API fetch app.</li>
+                        <li><strong>Weeks 3-4:</strong> TypeScript basics (types, interfaces) - Convert To-Do List to TypeScript.</li>
+                        <li><strong>Weeks 5-6:</strong> Advanced TypeScript (generics, unions) - Build a typed CLI tool.</li>
+                    </ul>
+                    <p class="mt-4 text-gray-600"><strong>Milestones:</strong> TypeScript-based To-Do List with type safety.</p>
+                    <p class="mt-2 text-gray-600"><strong>Resources:</strong> freeCodeCamp, TypeScript Handbook, Udemy.</p>
+                </div>
+
+                <!-- Phase 3: React with TypeScript -->
+                <div class="phase-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-indigo-700 mb-2">Phase 3: React with TypeScript (6-8 Weeks)</h3>
+                    <p class="text-gray-600 mb-4"><strong>Objective:</strong> Build dynamic front-ends with React and TypeScript.</p>
+                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                        <li><strong>Weeks 1-2:</strong> React basics (JSX, Hooks) - Build a Counter and To-Do List.</li>
+                        <li><strong>Weeks 3-4:</strong> Intermediate React (Router, Redux) - Create a Blog front-end.</li>
+                        <li><strong>Weeks 5-6:</strong> Advanced React (optimization, testing) - Optimize and test Blog app.</li>
+                        <li><strong>Weeks 7-8:</strong> Advanced TypeScript with React - Refactor with type-safe forms.</li>
+                    </ul>
+                    <p class="mt-4 text-gray-600"><strong>Milestones:</strong> Deployed React Blog front-end with tests.</p>
+                    <p class="mt-2 text-gray-600"><strong>Resources:</strong> React Docs, Scrimba, Net Ninja.</p>
+                </div>
+
+                <!-- Phase 4: Next.js with TypeScript -->
+                <div class="phase-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-indigo-700 mb-2">Phase 4: Next.js with TypeScript (4-6 Weeks)</h3>
+                    <p class="text-gray-600 mb-4"><strong>Objective:</strong> Build SSR/static apps with Next.js and TypeScript.</p>
+                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                        <li><strong>Weeks 1-2:</strong> Next.js basics (SSG, SSR) - Build a portfolio site.</li>
+                        <li><strong>Weeks 3-4:</strong> Intermediate Next.js (ISR, dynamic routes) - Enhance Blog app.</li>
+                        <li><strong>Weeks 5-6:</strong> Advanced Next.js (NextAuth.js) - Add authentication and deploy.</li>
+                    </ul>
+                    <p class="mt-4 text-gray-600"><strong>Milestones:</strong> Full-stack Blog app deployed to Vercel.</p>
+                    <p class="mt-2 text-gray-600"><strong>Resources:</strong> Next.js Docs, Vercel, Udemy.</p>
+                </div>
+
+                <!-- Phase 5: MongoDB -->
+                <div class="phase-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-indigo-700 mb-2">Phase 5: MongoDB (4-6 Weeks)</h3>
+                    <p class="text-gray-600 mb-4"><strong>Objective:</strong> Manage NoSQL databases with MongoDB.</p>
+                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                        <li><strong>Weeks 1-2:</strong> MongoDB basics (CRUD, Atlas) - Build a local database.</li>
+                        <li><strong>Weeks 3-4:</strong> MongoDB with .NET - Integrate with Blog API.</li>
+                        <li><strong>Weeks 5-6:</strong> Advanced MongoDB (transactions, sharding) - Optimize Blog API.</li>
+                    </ul>
+                    <p class="mt-4 text-gray-600"><strong>Milestones:</strong> Blog API with MongoDB, deployed to Azure.</p>
+                    <p class="mt-2 text-gray-600"><strong>Resources:</strong> MongoDB University, .NET Driver Docs.</p>
+                </div>
+
+                <!-- Phase 6: Azure DevOps -->
+                <div class="phase-card bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-indigo-700 mb-2">Phase 6: Azure DevOps (4-6 Weeks)</h3>
+                    <p class="text-gray-600 mb-4"><strong>Objective:</strong> Master CI/CD and project management.</p>
+                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                        <li><strong>Weeks 1-2:</strong> Azure DevOps basics (Boards, Repos) - Set up a project.</li>
+                        <li><strong>Weeks 3-4:</strong> CI/CD pipelines - Deploy .NET API.</li>
+                        <li><strong>Weeks 5-6:</strong> Advanced pipelines (variables, approvals) - Deploy Next.js app.</li>
+                    </ul>
+                    <p class="mt-4 text-gray-600"><strong>Milestones:</strong> CI/CD for Blog app, sprint in Boards.</p>
+                    <p class="mt-2 text-gray-600"><strong>Resources:</strong> Microsoft Learn, Azure DevOps Labs.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Capstone Project -->
+        <section class="mb-12 bg-indigo-600 text-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-semibold mb-4">Phase 7: Capstone Project (4-6 Weeks)</h2>
+            <p class="text-lg mb-4"><strong>Objective:</strong> Build a full-stack e-commerce platform.</p>
+            <ul class="list-disc pl-5 space-y-2">
+                <li><strong>Weeks 1-2:</strong> Design MongoDB schema, set up .NET API, initialize Next.js with TypeScript.</li>
+                <li><strong>Weeks 3-4:</strong> Build product listing, cart, and authentication (NextAuth.js, JWT).</li>
+                <li><strong>Weeks 5-6:</strong> Set up CI/CD in Azure DevOps, deploy to Azure/Vercel, add tests.</li>
+            </ul>
+            <p class="mt-4"><strong>Deliverables:</strong> Functional e-commerce platform, CI/CD pipelines, documentation.</p>
+        </section>
+
+        <!-- Timeline -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold text-indigo-600 mb-6">Timeline Summary</h2>
+            <div class="relative pl-8">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-300"></div>
+                <div class="space-y-6">
+                    <div class="relative">
+                        <div class="timeline-dot"></div>
+                        <p class="text-gray-700"><strong>Phase 1: .NET</strong> (6-8 weeks)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot"></div>
+                        <p class="text-gray-700"><strong>Phase 2: JavaScript & TypeScript</strong> (4-6 weeks)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot"></div>
+                        <p class="text-gray-700"><strong>Phase 3: React with TypeScript</strong> (6-8 weeks)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot"></div>
+                        <p class="text-gray-700"><strong>Phase 4: Next.js with TypeScript</strong> (4-6 weeks)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot"></div>
+                        <p class="text-gray-700"><strong>Phase 5: MongoDB</strong> (4-6 weeks)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot"></div>
+                        <p class="text-gray-700"><strong>Phase 6: Azure DevOps</strong> (4-6 weeks)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot"></div>
+                        <p class="text-gray-700"><strong>Phase 7: Capstone Project</strong> (4-6 weeks)</p>
+                    </div>
+                    <div class="relative">
+                        <div class="timeline-dot"></div>
+                        <p class="text-gray-700"><strong>Total: ~32-46 weeks (7-9 months)</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tips -->
+        <section class="mb-12 bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-3xl font-semibold text-indigo-600 mb-4">General Tips</h2>
+            <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                <li><strong>Practice Daily:</strong> Code for 1-2 hours and study theory for 1 hour daily.</li>
+                <li><strong>Use GitHub:</strong> Store projects for version control and portfolio building.</li>
+                <li><strong>Join Communities:</strong> Engage on Stack Overflow, Reddit, or Discord.</li>
+                <li><strong>Review Regularly:</strong> Revisit concepts weekly to reinforce learning.</li>
+                <li><strong>Build a Portfolio:</strong> Document projects in a portfolio website.</li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top bg-indigo-600 text-white p-3 rounded-full shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
+    <footer class="bg-indigo-600 text-white text-center py-4">
+        <p>&copy; 2025 Learning Plan. Deployed for Aspiring Developers.</p>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            // Scroll to top button visibility
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 300) {
+                    $('.scroll-to-top').addClass('visible');
+                } else {
+                    $('.scroll-to-top').removeClass('visible');
+                }
+            });
+
+            // Scroll to top action
+            $('.scroll-to-top').click(function() {
+                $('html, body').animate({ scrollTop: 0 }, 600);
+            });
+        });
+    </script>
+</body>
+</html>
